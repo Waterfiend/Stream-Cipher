@@ -1,12 +1,8 @@
 package edu.aub;
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMain.java to edit this template
- */
 
+import edu.aub.security.a5.A51Cipher;
+import edu.aub.security.rc4.RC4;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -16,13 +12,25 @@ import javafx.stage.Stage;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * The main class which we used to launch our JavaFX application, used to create a GUI in order to encrypt/decrypt keys using the RC4 and A5/1 stream ciphers.
  *
- * @author Youhanna
+ * @author Abdallah M. Wahidi
+ * @author Karim Obeid
+ * @author Youhanna Abou Jaoudeh
  */
 public class Main extends Application {
+
+    /**
+     * The main entry point of our Java application, used to launch the JavaFX gui in this context.
+     *
+     * @param args The arguments we pass.
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        Stage window = primaryStage;
 
         HBox root = new HBox(20);
         root.setAlignment(Pos.CENTER);
@@ -46,16 +54,15 @@ public class Main extends Application {
         btn1.setText("RC4 Cipher");
         btn1.setMinSize(200, 100);
         btn1.setOnAction(e -> {
-            window.setScene(sceneRC);
+            primaryStage.setScene(sceneRC);
         });
 
         Button btn2 = new Button();
         btn2.setText("A5 Cipher");
         btn2.setMinSize(200, 100);
         btn2.setOnAction(e -> {
-            window.setScene(sceneA);
+            primaryStage.setScene(sceneA);
         });
-
 
 
         //RC4 section
@@ -83,7 +90,7 @@ public class Main extends Application {
         rcDEncrypt.setOnAction(e -> {
             byte[] inp = input1.getText().getBytes(StandardCharsets.UTF_8);
             byte[] key = input2.getText().getBytes(StandardCharsets.UTF_8);
-            byte[] res = RC4.encrypt(inp,key);
+            byte[] res = RC4.encrypt(inp, key);
 
             StringBuilder sb = new StringBuilder();
             for (byte b : res) {
@@ -97,9 +104,8 @@ public class Main extends Application {
         backButton1.setText("Go Back");
         grid1.add(backButton1, 2, 8);
         backButton1.setOnAction(e -> {
-            window.setScene(scene);
+            primaryStage.setScene(scene);
         });
-
 
 
         //A5 section
@@ -122,20 +128,23 @@ public class Main extends Application {
         grid2.add(aResult, 2, 5);
 
         Button aEncrypt = new Button();
+        A51Cipher a51 = new A51Cipher();
         aEncrypt.setText("Encrypt");
         aEncrypt.setMinWidth(80);
         grid2.add(aEncrypt, 0, 7);
         GridPane.setHalignment(aEncrypt, HPos.RIGHT);
+        String input = Ainput1.getText();
         aEncrypt.setOnAction(e -> {
-
+            aResult.setText(a51.encrypt(input) + "\u001B[0m");
         });
 
         Button aDecrypt = new Button();
         aDecrypt.setText("Decrypt");
         aDecrypt.setMinWidth(80);
         grid2.add(aDecrypt, 2, 7);
+        String in2 = Ainput2.getText();
         aDecrypt.setOnAction(e -> {
-
+            aResult.setText(a51.decrypt(in2) + "\u001B[0m");
         });
 
         Button backButton2 = new Button();
@@ -143,24 +152,13 @@ public class Main extends Application {
         backButton2.setMinWidth(80);
         grid2.add(backButton2, 2, 8);
         backButton2.setOnAction(e -> {
-            window.setScene(scene);
+            primaryStage.setScene(scene);
         });
 
-        //
-        //
+        root.getChildren().addAll(btn1, btn2);
 
-        root.getChildren().addAll(btn1,btn2);
-
-        window.setTitle("RC-4 and A5 Encryption-Decryption Tool");
-        window.setScene(scene);
-        window.show();
+        primaryStage.setTitle("RC-4 and A5 Encryption-Decryption Tool");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
 }
