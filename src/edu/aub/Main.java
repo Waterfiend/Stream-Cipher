@@ -1,19 +1,19 @@
-package edu.aub;/*
+package edu.aub;
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMain.java to edit this template
  */
 
 import javafx.application.Application;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -27,28 +27,28 @@ public class Main extends Application {
         HBox root = new HBox(20);
         root.setAlignment(Pos.CENTER);
         Scene scene = new Scene(root, 600, 500);
-        
+
         GridPane grid1 = new GridPane();
         grid1.setAlignment(Pos.CENTER);
         grid1.setHgap(10);
         grid1.setVgap(10);
         grid1.setPadding(new Insets(25, 25, 25, 25));
         Scene sceneRC = new Scene(grid1, 600, 500);
-        
+
         GridPane grid2 = new GridPane();
         grid2.setAlignment(Pos.CENTER);
         grid2.setHgap(10);
         grid2.setVgap(10);
         grid2.setPadding(new Insets(25, 25, 25, 25));
         Scene sceneA = new Scene(grid2, 600, 500);
-        
+
         Button btn1 = new Button();
         btn1.setText("RC4 Cipher");
         btn1.setMinSize(200, 100);
         btn1.setOnAction(e -> {
             window.setScene(sceneRC);
         });
-        
+
         Button btn2 = new Button();
         btn2.setText("A5 Cipher");
         btn2.setMinSize(200, 100);
@@ -56,8 +56,8 @@ public class Main extends Application {
             window.setScene(sceneA);
         });
 
-              
-        
+
+
         //RC4 section
         Label rcLabel1 = new Label("Enter the message or cipher:");
         GridPane.setHalignment(rcLabel1, HPos.RIGHT);
@@ -76,23 +76,32 @@ public class Main extends Application {
         TextField rcResult = new TextField();
         rcResult.setEditable(false);
         grid1.add(rcResult, 2, 5);
-        
+
         Button rcDEncrypt = new Button();
         rcDEncrypt.setText("Encrypt/Decrypt");
         grid1.add(rcDEncrypt, 2, 7);
         rcDEncrypt.setOnAction(e -> {
-            
+            byte[] inp = input1.getText().getBytes(StandardCharsets.UTF_8);
+            byte[] key = input2.getText().getBytes(StandardCharsets.UTF_8);
+            byte[] res = RC4.encrypt(inp,key);
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : res) {
+                sb.append(String.format("%02X ", b));
+            }
+            rcResult.setText(sb.toString());
+
         });
-        
+
         Button backButton1 = new Button();
         backButton1.setText("Go Back");
         grid1.add(backButton1, 2, 8);
         backButton1.setOnAction(e -> {
             window.setScene(scene);
-        });  
-        
-        
-        
+        });
+
+
+
         //A5 section
         Label aLabel1 = new Label("Enter the message or cipher:");
         GridPane.setHalignment(aLabel1, HPos.RIGHT);
@@ -111,37 +120,37 @@ public class Main extends Application {
         TextField aResult = new TextField();
         aResult.setEditable(false);
         grid2.add(aResult, 2, 5);
-        
+
         Button aEncrypt = new Button();
         aEncrypt.setText("Encrypt");
         aEncrypt.setMinWidth(80);
         grid2.add(aEncrypt, 0, 7);
         GridPane.setHalignment(aEncrypt, HPos.RIGHT);
         aEncrypt.setOnAction(e -> {
-            
+
         });
-        
+
         Button aDecrypt = new Button();
         aDecrypt.setText("Decrypt");
         aDecrypt.setMinWidth(80);
         grid2.add(aDecrypt, 2, 7);
         aDecrypt.setOnAction(e -> {
-            
+
         });
-        
+
         Button backButton2 = new Button();
         backButton2.setText("Go Back");
         backButton2.setMinWidth(80);
         grid2.add(backButton2, 2, 8);
         backButton2.setOnAction(e -> {
             window.setScene(scene);
-        });  
-        
+        });
+
         //
         //
-        
+
         root.getChildren().addAll(btn1,btn2);
-  
+
         window.setTitle("RC-4 and A5 Encryption-Decryption Tool");
         window.setScene(scene);
         window.show();
@@ -153,5 +162,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

@@ -1,0 +1,84 @@
+package edu.aub;
+import java.nio.charset.StandardCharsets;
+
+public class RC4 {
+
+    private static byte[] S = new byte[256];
+    private static byte[] T = new byte[256];
+    private static int keylen;
+
+
+    private static void key_schedule(final byte[] key){
+        if (key.length < 1 || key.length > 256) {
+            throw new IllegalArgumentException(
+                    "key must be between 1 and 256 bytes");
+        } else {
+            keylen = key.length;
+            for (int i = 0; i < 256; i++) {
+                S[i] = (byte) i;
+                T[i] = key[i % keylen];
+            }
+            int j = 0;
+            byte tmp;
+            for (int i = 0; i < 256; i++) {
+                j = (j + S[i] + T[i]) & 0xFF; //addition mod 256
+                tmp = S[j];
+                S[j] = S[i];
+                S[i] = tmp;
+            }
+        }
+    }
+
+    public static byte[] encrypt(final byte[] plaintext, final byte[] key) {
+        key_schedule(key);
+        final byte[] ciphertext = new byte[plaintext.length];
+        int i = 0, j = 0, k, t;
+        byte tmp;
+        for (int counter = 0; counter < plaintext.length; counter++) {
+            i = (i + 1) & 0xFF;
+            j = (j + S[i]) & 0xFF;
+            tmp = S[j];
+            S[j] = S[i];
+            S[i] = tmp;
+            t = (S[i] + S[j]) & 0xFF;
+            k = S[t];
+            ciphertext[counter] = (byte) (plaintext[counter] ^ k);
+        }
+        return ciphertext;
+    }
+
+    public static byte[] decrypt(final byte[] ciphertext,final byte[] key) {
+        return encrypt(ciphertext,key);
+    }
+
+//    public static void main(String [] args){
+//        String key = "key3";
+//        String text = "test1";
+//
+//        byte[] keytest  = key.getBytes(StandardCharsets.UTF_8);
+//        byte[] pt = text.getBytes(StandardCharsets.UTF_8);
+//
+//        StringBuilder sb3 = new StringBuilder();
+//        for (byte b : pt) {
+//            sb3.append(String.format("%02X ", b));
+//        }
+//        System.out.println("Plain: " +sb3.toString());
+//
+//
+//        byte[] cipher = RC4.encrypt(pt,keytest);
+//        byte[] back = RC4.decrypt(cipher,keytest);
+//
+//        StringBuilder sb = new StringBuilder();
+//        for (byte b : cipher) {
+//            sb.append(String.format("%02X ", b));
+//        }
+//        System.out.println("Encrypyted: " +sb.toString());
+//
+//        StringBuilder sb2 = new StringBuilder();
+//        for (byte b : back) {
+//            sb2.append(String.format("%02X ", b));
+//        }
+//        System.out.println("Decrypted: " + sb2.toString());
+//    }
+
+}
